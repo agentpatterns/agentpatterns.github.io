@@ -1,0 +1,47 @@
+behavior PatternFiltering {
+  scenario "filter by single tag" {
+    given: patterns with tags ["tdd", "bdd", "ci"]
+    when: filter(tag: "tdd")
+    then: returned patterns all have tag "tdd"
+    and: count(returned) < count(all patterns)
+  }
+
+  scenario "filter by tag returns empty when no match" {
+    given: patterns with tags ["tdd", "bdd"]
+    when: filter(tag: "nonexistent")
+    then: returned is empty
+  }
+
+  scenario "search by name" {
+    given: patterns with names ["TDD Guardrails", "Architecture Fitness"]
+    when: search(query: "tdd")
+    then: returned contains "TDD Guardrails"
+    and: returned does not contain "Architecture Fitness"
+  }
+
+  scenario "search by description" {
+    given: pattern with description "Enforce test-driven development"
+    when: search(query: "test-driven")
+    then: returned contains the pattern
+  }
+
+  scenario "search is case-insensitive" {
+    given: pattern with name "TDD Guardrails"
+    when: search(query: "tdd guardrails")
+    then: returned contains the pattern
+  }
+}
+
+behavior CategoryNavigation {
+  scenario "list categories ordered by displayOrder" {
+    given: categories with displayOrders [3, 1, 2]
+    when: listCategories()
+    then: returned categories in order [1, 2, 3]
+  }
+
+  scenario "category includes pattern count" {
+    given: category "Testing" with 3 patterns
+    when: getCategoryWithPatterns(slug: "testing")
+    then: patternCount = 3
+  }
+}

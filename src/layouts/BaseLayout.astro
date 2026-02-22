@@ -1,0 +1,105 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'A catalog of agentic coding patterns' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} | Agentic Coding Patterns</title>
+    <style>
+      :root {
+        --color-bg: #fafafa;
+        --color-surface: #ffffff;
+        --color-text: #1a1a2e;
+        --color-text-muted: #64748b;
+        --color-primary: #6366f1;
+        --color-primary-hover: #4f46e5;
+        --color-border: #e2e8f0;
+        --color-tag-bg: #eef2ff;
+        --color-tag-text: #4338ca;
+        --font-sans: system-ui, -apple-system, sans-serif;
+        --font-mono: 'SF Mono', 'Fira Code', monospace;
+        --max-width: 960px;
+        --radius: 8px;
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: var(--font-sans);
+        background: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
+        padding: var(--spacing-md) var(--spacing-xl);
+      }
+
+      header nav {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-lg);
+      }
+
+      header a {
+        text-decoration: none;
+        color: var(--color-text);
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      header a:hover { color: var(--color-primary); }
+
+      main {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: var(--spacing-xl);
+        flex: 1;
+        width: 100%;
+      }
+
+      footer {
+        background: var(--color-surface);
+        border-top: 1px solid var(--color-border);
+        padding: var(--spacing-md) var(--spacing-xl);
+        text-align: center;
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/lite-ts/">Agentic Patterns</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>Agentic Coding Patterns Catalog</p>
+    </footer>
+  </body>
+</html>

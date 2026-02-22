@@ -1,0 +1,50 @@
+entity Category {
+  name: String
+  slug: Slug
+  description: String
+  displayOrder: PositiveInteger
+  patterns: [Pattern]
+
+  derived patternCount = count(patterns)
+}
+
+entity Pattern {
+  name: String
+  slug: Slug
+  category: Category
+  description: String
+  tags: [Tag]
+  repoUrl: Url?
+  samplePrompt: String?
+  skills: [SkillReference]
+  tools: [ToolReference]
+}
+
+rule CreateCategory {
+  when: NewCategory(name, description, displayOrder)
+  requires: name is non-empty
+  requires: slug derived from name is unique
+  requires: displayOrder > 0
+  ensures: Category created with derived slug
+}
+
+rule CreatePattern {
+  when: NewPattern(name, categorySlug, description, tags)
+  requires: name is non-empty
+  requires: categorySlug references existing Category
+  requires: tags are non-empty strings
+  ensures: Pattern created with derived slug
+}
+
+rule FilterPatternsByTag {
+  when: FilterRequest(tag)
+  requires: tag is non-empty
+  ensures: returned patterns all contain tag
+  ensures: patterns without tag are excluded
+}
+
+rule SearchPatterns {
+  when: SearchRequest(query)
+  requires: query is non-empty
+  ensures: returned patterns match query in name or description
+}

@@ -1,2 +1,2 @@
-# agentpatterns.github.io
-* hbench - agentic ai harness benchmark suite
+# hbench.github.io
+hbench - agentic ai harness benchmark suite

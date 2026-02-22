@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PatternCard from '../../components/PatternCard.astro';
+import { createListCategoriesUseCase, createGetCategoryWithPatternsUseCase } from '../../shell/composition-root';
+
+export async function getStaticPaths() {
+  const listCategories = createListCategoriesUseCase();
+  const categoriesWithCounts = await listCategories.execute();
+
+  return categoriesWithCounts.map(({ category }) => ({
+    params: { slug: category.slug.toString() },
+  }));
+}
+
+const { slug } = Astro.params;
+const getCategoryWithPatterns = createGetCategoryWithPatternsUseCase();
+const result = await getCategoryWithPatterns.execute(slug!);
+
+if (!result) {
+  return Astro.redirect('/lite-ts/');
+}
+
+const { category, patterns } = result;
+---
+
+<BaseLayout title={category.name} description={category.description}>
+  <a href="/lite-ts/" class="back-link">&larr; All Categories</a>
+  <h1>{category.name}</h1>
+  <p class="description">{category.description}</p>
+
+  <h2>Patterns ({patterns.length})</h2>
+  <div class="pattern-grid">
+    {patterns.map((pattern) => (
+      <PatternCard
+        name={pattern.name}
+        slug={pattern.slug.toString()}
+        description={pattern.description}
+        tags={pattern.tags.map((t) => t.toString())}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .back-link { display: inline-block; margin-bottom: 1rem; color: var(--color-primary); text-decoration: none; }
+  .back-link:hover { text-decoration: underline; }
+  h1 { margin-bottom: 0.5rem; }
+  .description { color: var(--color-text-muted); margin-bottom: 2rem; }
+  h2 { margin-bottom: 1rem; }
+  .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

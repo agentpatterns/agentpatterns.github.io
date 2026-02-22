@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import { createListCategoriesUseCase } from '../shell/composition-root';
+
+const listCategories = createListCategoriesUseCase();
+const categoriesWithCounts = await listCategories.execute();
+---
+
+<BaseLayout title="Home">
+  <h1>Agentic Coding Patterns</h1>
+  <p class="subtitle">A catalog of patterns for building robust AI-assisted development workflows.</p>
+
+  <div class="category-grid">
+    {categoriesWithCounts.map(({ category, patternCount }) => (
+      <CategoryCard
+        name={category.name}
+        slug={category.slug.toString()}
+        description={category.description}
+        patternCount={patternCount}
+      />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  h1 { margin-bottom: 0.5rem; }
+  .subtitle { color: var(--color-text-muted); margin-bottom: 2rem; }
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

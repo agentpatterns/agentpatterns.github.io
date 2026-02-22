@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { createFilterPatternsUseCase, createGetPatternDetailUseCase } from '../../shell/composition-root';
+
+export async function getStaticPaths() {
+  const filterPatterns = createFilterPatternsUseCase();
+  const allPatterns = await filterPatterns.execute();
+
+  return allPatterns.map((pattern) => ({
+    params: { slug: pattern.slug.toString() },
+  }));
+}
+
+const { slug } = Astro.params;
+const getPatternDetail = createGetPatternDetailUseCase();
+const pattern = await getPatternDetail.execute(slug!);
+
+if (!pattern) {
+  return Astro.redirect('/lite-ts/');
+}
+---
+
+<BaseLayout title={pattern.name} description={pattern.description}>
+  <a href={`/lite-ts/categories/${pattern.categorySlug.toString()}/`} class="back-link">&larr; Back to Category</a>
+  <h1>{pattern.name}</h1>
+  <p class="description">{pattern.description}</p>
+
+  <div class="tags">
+    {pattern.tags.map((tag) => <span class="tag">{tag.toString()}</span>)}
+  </div>
+
+  {pattern.repoUrl && (
+    <div class="section">
+      <h2>Repository</h2>
+      <a href={pattern.repoUrl.toString()} target="_blank" rel="noopener noreferrer">
+        {pattern.repoUrl.toString()}
+      </a>
+    </div>
+  )}
+
+  {pattern.samplePrompt && (
+    <div class="section">
+      <h2>Sample Prompt</h2>
+      <pre class="prompt">{pattern.samplePrompt.toString()}</pre>
+    </div>
+  )}
+
+  {pattern.skills && pattern.skills.length > 0 && (
+    <div class="section">
+      <h2>Skills</h2>
+      <ul>
+        {pattern.skills.map((skill) => (
+          <li>
+            <strong>{skill.skillName}</strong>
+            <code>{skill.installCommand}</code>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {pattern.tools && pattern.tools.length > 0 && (
+    <div class="section">
+      <h2>Tools</h2>
+      <ul>
+        {pattern.tools.map((tool) => (
+          <li>
+            <a href={tool.toolUrl} target="_blank" rel="noopener noreferrer">{tool.toolName}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .back-link { display: inline-block; margin-bottom: 1rem; color: var(--color-primary); text-decoration: none; }
+  .back-link:hover { text-decoration: underline; }
+  h1 { margin-bottom: 0.5rem; }
+  .description { color: var(--color-text-muted); margin-bottom: 1rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 2rem; }
+  .tag {
+    font-size: 0.8rem;
+    color: var(--color-tag-text);
+    background: var(--color-tag-bg);
+    padding: 2px 0.5rem;
+    border-radius: 4px;
+  }
+  .section { margin-bottom: 2rem; }
+  .section h2 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+  .prompt {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    white-space: pre-wrap;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+  code {
+    background: var(--color-tag-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  ul { list-style: disc; padding-left: 1.5rem; }
+  li { margin-bottom: 0.5rem; }
+</style>

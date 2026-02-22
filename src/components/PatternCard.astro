@@ -1,0 +1,47 @@
+---
+interface Props {
+  name: string;
+  slug: string;
+  description: string;
+  tags: string[];
+}
+
+const { name, slug, description, tags } = Astro.props;
+---
+
+<a href={`/lite-ts/patterns/${slug}/`} class="pattern-card">
+  <h3>{name}</h3>
+  <p class="description">{description}</p>
+  <div class="tags">
+    {tags.map((tag) => <span class="tag">{tag}</span>)}
+  </div>
+</a>
+
+<style>
+  .pattern-card {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .pattern-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+  }
+
+  h3 { margin-bottom: var(--spacing-sm); color: var(--color-text); }
+  .description { color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-md); }
+  .tags { display: flex; flex-wrap: wrap; gap: var(--spacing-xs); }
+  .tag {
+    font-size: 0.75rem;
+    color: var(--color-tag-text);
+    background: var(--color-tag-bg);
+    padding: 2px var(--spacing-sm);
+    border-radius: 4px;
+  }
+</style>

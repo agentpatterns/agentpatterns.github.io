@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "command": ".claude/hooks/lint-changed-file.sh",
+        "description": "Auto-lint changed TypeScript files"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "command": ".claude/hooks/block-protected-paths.sh",
+        "description": "Block edits to protected paths"
+      }
+    ]
+  }
+}
